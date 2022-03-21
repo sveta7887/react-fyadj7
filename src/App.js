@@ -12,27 +12,29 @@ class App extends React.Component {
     foundAlbums: [],
   };
 
-  editSearchTerm = (e) => {
+  onKeyPress = (e) => {
     const searchTerm = e.target.value;
 
-    if (!searchTerm) {
-      this.setState({ names: [...init] });
-    } else {
-      fetch(`https://itunes.apple.com/search?term=${searchTerm}&entity=album`)
-        .then((res) => res.json())
-        .then((res) => {
-          const albumNames = (res.results)
-            ?.sort((a, b) =>
-              (a.collectionName).localeCompare(b.collectionName)
-            )
-            .slice(0, 5)
-            .map((album) => album.collectionName);
-          this.setState({ foundAlbums: albumNames });
-        })
-        .catch((err) => {
-          console.error(err);
-          this.setState({ foundAlbums: [] });
-        });
+    if(e.key === 'Enter'){
+      if (!searchTerm) {
+        this.setState({ names: [...init] });
+      } else {
+        fetch(`https://itunes.apple.com/search?term=${searchTerm}&entity=album`)
+          .then((res) => res.json())
+          .then((res) => {
+            const albumNames = (res.results)
+              ?.sort((a, b) =>
+                (a.collectionName).localeCompare(b.collectionName)
+              )
+              .slice(0, 5)
+              .map((album) => album.collectionName);
+            this.setState({ foundAlbums: albumNames });
+          })
+          .catch((err) => {
+            console.error(err);
+            this.setState({ foundAlbums: [] });
+          });
+      }
     }
   };
 
@@ -72,8 +74,8 @@ class App extends React.Component {
       <div style={{ textAlign: 'center', paddingTop: '30vh' }}>
         <input
           type="text"
-          onChange={this.editSearchTerm}
-          placeholder="Search"
+          onKeyPress={this.onKeyPress}
+          placeholder="Search Band"
         />
         <br></br>
         <NamesContainer names={this.dynamicSearch()} />
